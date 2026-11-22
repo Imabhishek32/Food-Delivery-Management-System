@@ -1,0 +1,22 @@
+{% extends 'dashboard_base.html' %}
+{% load ui %}
+{% block title %}Payments{% endblock %}
+{% block page_title %}Payments{% endblock %}
+{% block dash_content %}
+<div class="row g-3 mb-3"><div class="col-md-4"><div class="stat-card alt2"><div class="value">&#8377;{{ total_paid }}</div><div class="label">Total paid</div></div></div></div>
+<form method="get" class="row g-2 mb-3" style="max-width:560px">
+  <div class="col-sm-4"><select name="method" class="form-select" aria-label="Method"><option value="">All methods</option><option value="razorpay" {% if method == 'razorpay' %}selected{% endif %}>Razorpay</option><option value="cod" {% if method == 'cod' %}selected{% endif %}>Cash on delivery</option></select></div>
+  <div class="col-sm-5"><select name="status" class="form-select" aria-label="Status"><option value="">All statuses</option>{% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div class="col-sm-3"><button class="btn btn-fm w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-card"><div class="table-responsive"><table class="table mb-0">
+  <thead><tr><th>Order</th><th>Customer</th><th>Method</th><th>Amount</th><th>Status</th><th>Transaction ID</th><th>Date</th></tr></thead><tbody>
+  {% for p in page_obj %}
+  <tr><td>{{ p.order.order_number }}</td><td>{{ p.order.customer_name }}</td><td>{{ p.get_method_display }}</td><td>&#8377;{{ p.amount }}</td>
+    <td><span class="badge text-bg-{{ p.status|badge }}">{{ p.get_status_display }}</span>{% if p.failure_reason %}<div class="small text-muted">{{ p.failure_reason }}</div>{% endif %}</td>
+    <td class="small">{{ p.razorpay_payment_id|default:"-" }}</td><td>{{ p.created_at|date:"d M Y, H:i" }}</td></tr>
+  {% empty %}<tr><td colspan="7" class="text-center text-muted py-4">No payments found.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% include 'partials/pagination.html' %}
+</div>
+{% endblock %}

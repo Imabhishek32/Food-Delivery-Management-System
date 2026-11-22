@@ -1,0 +1,18 @@
+{% extends 'dashboard_base.html' %}
+{% load ui %}
+{% block title %}Inventory overview{% endblock %}
+{% block page_title %}Inventory overview{% endblock %}
+{% block dash_content %}
+<form method="get" class="mb-3" style="max-width:260px"><select name="status" class="form-select" data-autosubmit aria-label="Filter">
+  <option value="">All items</option>{% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></form>
+<div class="table-card"><div class="table-responsive"><table class="table mb-0">
+  <thead><tr><th>Item</th><th>Restaurant</th><th>Quantity</th><th>Alert at</th><th>Status</th><th>Updated</th></tr></thead><tbody>
+  {% for inv in page_obj %}
+  <tr><td>{{ inv.food_item.name }}</td><td>{{ inv.food_item.restaurant.name }}</td><td>{{ inv.quantity }}</td><td>{{ inv.minimum_stock }}</td>
+    <td><span class="badge text-bg-{{ inv.status|badge }}">{{ inv.get_status_display }}</span></td><td>{{ inv.updated_at|date:"d M, H:i" }}</td></tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No inventory records.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% include 'partials/pagination.html' %}
+  <p class="small text-muted mt-2 mb-0">Restaurant owners update their own stock. Admins can edit any record in the <a href="{% url 'admin:inventory_inventory_changelist' %}">Django admin</a>.</p>
+</div>
+{% endblock %}

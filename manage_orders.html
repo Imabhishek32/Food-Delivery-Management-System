@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+{% load ui %}
+{% block title %}All orders{% endblock %}
+{% block page_title %}Manage orders{% endblock %}
+{% block dash_content %}
+<form method="get" class="row g-2 mb-3" style="max-width:640px">
+  <div class="col-sm-5"><input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Order, customer or restaurant"></div>
+  <div class="col-sm-4"><select name="status" class="form-select" aria-label="Status"><option value="">All statuses</option>
+    {% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div class="col-sm-3"><button class="btn btn-fm w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-card"><div class="table-responsive"><table class="table mb-0">
+  <thead><tr><th>Order</th><th>Restaurant</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Action</th></tr></thead><tbody>
+  {% for order in page_obj %}
+  <tr>
+    <td><a href="{% url 'orders:tracking' order.order_number %}">{{ order.order_number }}</a><div class="small text-muted">{{ order.created_at|date:"d M, H:i" }}</div></td>
+    <td>{{ order.restaurant.name }}</td><td>{{ order.customer_name }}</td><td>&#8377;{{ order.total }}</td>
+    <td>{{ order.get_payment_method_display }}<br><span class="badge text-bg-{{ order.payment_status|badge }}">{{ order.get_payment_status_display }}</span></td>
+    <td><span class="badge text-bg-{{ order.status|badge }}">{{ order.get_status_display }}</span></td>
+    <td>{% include 'partials/order_status_form.html' %}</td>
+  </tr>
+  {% empty %}<tr><td colspan="7" class="text-center text-muted py-4">No orders found.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% include 'partials/pagination.html' %}
+</div>
+{% endblock %}

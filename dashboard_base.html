@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block footer %}{% endblock %}
+{% block content %}
+{% with view=request.resolver_match.view_name %}
+<div class="container-fluid">
+  <div class="row">
+    <aside class="col-lg-2 fm-sidebar">
+      <ul class="nav flex-column">
+        {% if user.role == 'customer' %}
+          <li><a class="nav-link {% if view == 'dashboard:customer' %}active{% endif %}" href="{% url 'dashboard:customer' %}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+          <li><a class="nav-link {% if view == 'food:list' %}active{% endif %}" href="{% url 'food:list' %}"><i class="bi bi-egg-fried"></i>Browse food</a></li>
+          <li><a class="nav-link {% if view == 'cart:view' %}active{% endif %}" href="{% url 'cart:view' %}"><i class="bi bi-cart3"></i>My cart</a></li>
+          <li><a class="nav-link {% if view == 'orders:history' %}active{% endif %}" href="{% url 'orders:history' %}"><i class="bi bi-receipt"></i>Order history</a></li>
+          <li><a class="nav-link {% if view == 'accounts:profile' %}active{% endif %}" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i>Profile</a></li>
+        {% elif user.role == 'owner' %}
+          <li><a class="nav-link {% if view == 'dashboard:restaurant' %}active{% endif %}" href="{% url 'dashboard:restaurant' %}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+          <li><a class="nav-link {% if view == 'restaurants:profile' %}active{% endif %}" href="{% url 'restaurants:profile' %}"><i class="bi bi-shop"></i>Restaurant profile</a></li>
+          <li><a class="nav-link {% if view == 'food:manage' %}active{% endif %}" href="{% url 'food:manage' %}"><i class="bi bi-egg-fried"></i>Manage food</a></li>
+          <li><a class="nav-link {% if view == 'food:add' %}active{% endif %}" href="{% url 'food:add' %}"><i class="bi bi-plus-circle"></i>Add food</a></li>
+          <li><a class="nav-link {% if view == 'orders:manage' %}active{% endif %}" href="{% url 'orders:manage' %}"><i class="bi bi-bag-check"></i>Orders</a></li>
+          <li><a class="nav-link {% if view == 'inventory:manage' %}active{% endif %}" href="{% url 'inventory:manage' %}"><i class="bi bi-boxes"></i>Inventory</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:sales_report' %}active{% endif %}" href="{% url 'dashboard:sales_report' %}"><i class="bi bi-graph-up"></i>Sales report</a></li>
+          <li><a class="nav-link {% if view == 'accounts:profile' %}active{% endif %}" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i>My profile</a></li>
+        {% elif user.role == 'admin' %}
+          <li><a class="nav-link {% if view == 'dashboard:admin' %}active{% endif %}" href="{% url 'dashboard:admin' %}"><i class="bi bi-speedometer2"></i>Dashboard</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_customers' %}active{% endif %}" href="{% url 'dashboard:manage_customers' %}"><i class="bi bi-people"></i>Customers &amp; owners</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_restaurants' %}active{% endif %}" href="{% url 'dashboard:manage_restaurants' %}"><i class="bi bi-shop"></i>Restaurants</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_orders' %}active{% endif %}" href="{% url 'dashboard:manage_orders' %}"><i class="bi bi-bag-check"></i>Orders</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_food' %}active{% endif %}" href="{% url 'dashboard:manage_food' %}"><i class="bi bi-egg-fried"></i>Food items</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_inventory' %}active{% endif %}" href="{% url 'dashboard:manage_inventory' %}"><i class="bi bi-boxes"></i>Inventory</a></li>
+          <li><a class="nav-link {% if view == 'dashboard:manage_payments' %}active{% endif %}" href="{% url 'dashboard:manage_payments' %}"><i class="bi bi-credit-card"></i>Payments</a></li>
+          <li><a class="nav-link" href="{% url 'admin:index' %}"><i class="bi bi-gear"></i>Categories &amp; coupons</a></li>
+          <li><a class="nav-link {% if view == 'accounts:profile' %}active{% endif %}" href="{% url 'accounts:profile' %}"><i class="bi bi-person"></i>My profile</a></li>
+        {% endif %}
+      </ul>
+    </aside>
+    <main class="col-lg-10 p-3 p-md-4">
+      <h1 class="fm-page-title">{% block page_title %}{% endblock %}</h1>
+      {% block dash_content %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endwith %}
+{% endblock %}

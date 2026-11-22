@@ -1,0 +1,31 @@
+{% extends 'dashboard_base.html' %}
+{% load ui %}
+{% block title %}Restaurants{% endblock %}
+{% block page_title %}Manage restaurants{% endblock %}
+{% block dash_content %}
+<form method="get" class="row g-2 mb-3" style="max-width:640px">
+  <div class="col-sm-5"><input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Name, owner or city"></div>
+  <div class="col-sm-4"><select name="status" class="form-select" aria-label="Status"><option value="">All statuses</option>
+    {% for value, label in statuses %}<option value="{{ value }}" {% if value == status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+  <div class="col-sm-3"><button class="btn btn-fm w-100" type="submit">Filter</button></div>
+</form>
+<div class="table-card"><div class="table-responsive"><table class="table mb-0">
+  <thead><tr><th>Restaurant</th><th>Owner</th><th>City</th><th>Status</th><th>Featured</th><th>Actions</th></tr></thead><tbody>
+  {% for r in page_obj %}
+  <tr>
+    <td><a href="{% url 'restaurants:detail' r.slug %}">{{ r.name }}</a></td><td>{{ r.owner.email }}</td><td>{{ r.city }}</td>
+    <td><span class="badge text-bg-{{ r.status|badge }}">{{ r.get_status_display }}</span></td>
+    <td>{% if r.is_featured %}<i class="bi bi-star-fill text-warning"></i>{% else %}-{% endif %}</td>
+    <td>
+      <form method="post" action="{% url 'dashboard:review_restaurant' r.pk %}" class="d-flex gap-1 flex-wrap">{% csrf_token %}
+        {% if r.status != 'approved' %}<button name="action" value="approve" class="btn btn-sm btn-success" type="submit">Approve</button>{% endif %}
+        {% if r.status != 'rejected' %}<button name="action" value="reject" class="btn btn-sm btn-outline-danger" type="submit">Reject</button>{% endif %}
+        <button name="action" value="feature" class="btn btn-sm btn-outline-fm" type="submit">{% if r.is_featured %}Unfeature{% else %}Feature{% endif %}</button>
+      </form>
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="text-center text-muted py-4">No restaurants found.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% include 'partials/pagination.html' %}
+</div>
+{% endblock %}

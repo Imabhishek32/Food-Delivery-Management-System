@@ -1,0 +1,33 @@
+{% extends 'dashboard_base.html' %}
+{% load static ui %}
+{% block title %}Admin dashboard{% endblock %}
+{% block page_title %}Admin dashboard{% endblock %}
+{% block dash_content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="value">{{ total_customers }}</div><div class="label">Customers</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt3"><div class="value">{{ total_restaurants }}</div><div class="label">Restaurants{% if pending_restaurants %} ({{ pending_restaurants }} pending){% endif %}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt1"><div class="value">{{ total_food }}</div><div class="label">Food items</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt2"><div class="value">{{ total_orders }}</div><div class="label">Total orders</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt2"><div class="value">&#8377;{{ total_revenue }}</div><div class="label">Total revenue (delivered)</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt1"><div class="value">{{ pending_orders }}</div><div class="label">Pending orders</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="value">{{ completed_orders }}</div><div class="label">Completed orders</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card alt4"><div class="value">{{ low_stock }}</div><div class="label">Low-stock items ({{ out_of_stock }} out)</div></div></div>
+</div>
+<div class="row g-4 mb-4">
+  <div class="col-lg-8"><div class="card p-3"><h5>Sales - last 14 days</h5><canvas id="salesChart" height="130"></canvas></div></div>
+  <div class="col-lg-4"><div class="card p-3"><h5>Orders by status</h5><canvas id="statusChart" height="200"></canvas></div></div>
+</div>
+<div class="table-card">
+  <div class="d-flex justify-content-between mb-2"><h5 class="mb-0">Recent orders</h5><a href="{% url 'dashboard:manage_orders' %}">View all</a></div>
+  <div class="table-responsive"><table class="table mb-0">
+    <thead><tr><th>Order</th><th>Restaurant</th><th>Customer</th><th>Total</th><th>Status</th></tr></thead><tbody>
+    {% for o in recent_orders %}<tr><td>{{ o.order_number }}</td><td>{{ o.restaurant.name }}</td><td>{{ o.customer_name }}</td><td>&#8377;{{ o.total }}</td><td><span class="badge text-bg-{{ o.status|badge }}">{{ o.get_status_display }}</span></td></tr>
+    {% empty %}<tr><td colspan="5" class="text-center text-muted py-3">No orders yet.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{{ chart|json_script:"sales-chart-data" }}
+{{ status_chart|json_script:"status-chart-data" }}
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/charts.js' %}"></script>
+{% endblock %}
